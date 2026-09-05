@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Ajuste;
+use App\Models\Categoria;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -40,5 +41,27 @@ class DatabaseSeeder extends Seeder
             'logo' => null,
             'web' => 'https://www.restaurante.com',
         ]);
+
+        Categoria::create([
+            'nombre' => 'GASEOSAS',
+            'descripcion' => 'Todas las Bebidas gaseosas',
+            'estado' => 'Activo',
+        ]);
+        Categoria::create([
+            'nombre' => 'POLLO',
+            'descripcion' => 'Pollo a la brasa y Broaster',
+            'estado' => 'Activo',
+        ]);
+        Categoria::create([
+            'nombre' => 'HAMBURGUESAS',
+            'descripcion' => 'Todas las Hamburguesas',
+            'estado' => 'Activo',
+        ]);
+        Categoria::create([
+            'nombre' => 'LOMITOS',
+            'descripcion' => 'Todo Tipos Lomitos',
+            'estado' => 'Activo',
+        ]);
+
     }
 }
