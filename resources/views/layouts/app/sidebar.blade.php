@@ -36,9 +36,15 @@
                                 :current="request()->routeIs('admin.productos.*')" wire:navigate>Productos
                     </flux:navlist.item>
 
+                    <flux:navlist.item icon="currency-dollar" :href="route('admin.cajas.index')"
+                                    :current="request()->routeIs('admin.cajas.*')" wire:navigate>Cajas
+                    </flux:navlist.item>
+
                     <flux:navlist.item icon="shopping-cart" :href="route('admin.ventas.index')"
                                 :current="request()->routeIs('admin.ventas.*')" wire:navigate>Ventas / POS
                     </flux:navlist.item>
+
+
                 </flux:sidebar.group>
             </flux:sidebar.nav>
 

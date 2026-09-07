@@ -57,5 +57,12 @@ Route::post('/admin/ventas', [App\Http\Controllers\VentaController::class, 'stor
 Route::get('/admin/venta/{id}', [App\Http\Controllers\VentaController::class, 'show'])->name('admin.ventas.show')->middleware('auth');
 Route::delete('/admin/venta/{id}', [App\Http\Controllers\VentaController::class, 'destroy'])->name('admin.ventas.destroy')->middleware('auth');
 
+// Rutas para Cajas
+Route::get('/admin/cajas', [App\Http\Controllers\CajaController::class, 'index'])->name('admin.cajas.index')->middleware('auth');
+Route::post('/admin/cajas', [App\Http\Controllers\CajaController::class, 'store'])->name('admin.cajas.store')->middleware('auth');
+Route::post('/admin/cajas/{id}/cerrar', [App\Http\Controllers\CajaController::class, 'cerrar'])->name('admin.cajas.cerrar')->middleware('auth');
+Route::delete('/admin/cajas/{id}', [App\Http\Controllers\CajaController::class, 'destroy'])->name('admin.cajas.destroy')->middleware('auth');
+
+
 
 require __DIR__.'/settings.php';
