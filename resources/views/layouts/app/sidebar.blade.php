@@ -35,6 +35,10 @@
                     <flux:navlist.item icon="cube" :href="route('admin.productos.index')"
                                 :current="request()->routeIs('admin.productos.*')" wire:navigate>Productos
                     </flux:navlist.item>
+
+                    <flux:navlist.item icon="shopping-cart" :href="route('admin.ventas.index')"
+                                :current="request()->routeIs('admin.ventas.*')" wire:navigate>Ventas / POS
+                    </flux:navlist.item>
                 </flux:sidebar.group>
             </flux:sidebar.nav>
 
