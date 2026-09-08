@@ -7,7 +7,6 @@
         <flux:separator variant="subtle" />
     </div>
 
-    <!-- Barra de Búsqueda y Botón Abrir Caja -->
     <div class="flex gap-4 items-center justify-between mb-6">
         <div class="flex-1">
             <form action="{{ route('admin.cajas.index') }}" method="GET" class="flex gap-2 w-1/2">
@@ -48,7 +47,6 @@
         </div>
     </div>
 
-    <!-- Mensajes de Alerta -->
     @if (session('success'))
         <div class="mb-4 p-4 bg-emerald-50 dark:bg-emerald-900/30 border border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-300 rounded-lg text-sm">
             <i class="fas fa-check-circle mr-2"></i> {{ session('success') }}
@@ -61,7 +59,6 @@
         </div>
     @endif
 
-    <!-- Alerta de resultados de búsqueda -->
     @if (request('buscar'))
         <div class="mb-4 p-3 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg text-sm">
             <p class="text-gray-700 dark:text-gray-300">
@@ -74,7 +71,6 @@
         </div>
     @endif
 
-    <!-- Tabla Principal Estilo Compacto -->
     <div class="overflow-x-auto rounded-lg border border-gray-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 shadow-sm">
         <table class="min-w-full border-collapse">
             <thead class="bg-gray-50 dark:bg-zinc-900 text-center">
@@ -99,10 +95,10 @@
                             {{ $caja->user->name ?? 'N/A' }}
                         </td>
                         <td class="px-3.5 py-2.5 border border-gray-200 dark:border-zinc-700 whitespace-nowrap text-sm font-semibold text-gray-800 dark:text-gray-200 text-center">
-                            Bs {{ number_format($caja->saldo_inicial, 2) }}
+                            {{ $simboloDivisa }} {{ number_format($caja->saldo_inicial, 2) }}
                         </td>
                         <td class="px-3.5 py-2.5 border border-gray-200 dark:border-zinc-700 whitespace-nowrap text-sm font-bold text-emerald-600 dark:text-emerald-400 text-center">
-                            {{ $caja->saldo_final ? 'Bs ' . number_format($caja->saldo_final, 2) : 'En proceso' }}
+                            {{ $caja->saldo_final ? $simboloDivisa . ' ' . number_format($caja->saldo_final, 2) : 'En proceso' }}
                         </td>
                         <td class="px-3.5 py-2.5 border border-gray-200 dark:border-zinc-700 whitespace-nowrap text-xs text-gray-500 dark:text-gray-400 text-center">
                             {{ $caja->fecha_apertura }}
@@ -119,24 +115,26 @@
                         </td>
                         <td class="px-3.5 py-2.5 border border-gray-200 dark:border-zinc-700 whitespace-nowrap text-center">
                             <div class="flex justify-center gap-2">
-                                <!-- Botón Ver -->
-                                <a href="#" onclick="verDetalleCaja({{ $caja->id }}, '{{ $caja->user->name ?? 'N/A' }}', '{{ $caja->saldo_inicial }}', '{{ $caja->total_ventas }}', '{{ $caja->saldo_final }}', '{{ $caja->fecha_apertura }}', '{{ $caja->fecha_cierre }}', '{{ $caja->estado }}')"
+                                <a href="{{ route('admin.cajas.show', $caja->id) }}"
                                     class="inline-flex items-center px-2.5 py-1 bg-gray-500 hover:bg-gray-600 text-white text-xs font-semibold rounded transition" title="Ver Detalles">
                                     <i class="fas fa-eye mr-1"></i> Ver
                                 </a>
 
-                                <!-- Botón Ticket / Imprimir Arqueo -->
-                                <a href="#" onclick="window.print()"
-                                    class="inline-flex items-center px-2.5 py-1 bg-emerald-500 hover:bg-emerald-600 text-white text-xs font-semibold rounded transition" title="Imprimir Reporte">
-                                    <i class="fas fa-print mr-1"></i>
-                                </a>
+                                @if($caja->estado === 'cerrado')
+                                    <a href="{{ route('admin.cajas.reporte', $caja->id) }}" target="_blank" class="p-2 bg-emerald-600/20 text-emerald-400 hover:bg-emerald-600/30 rounded-lg transition" title="Imprimir Reporte de Turno">
+                                        <i class="fas fa-print"></i>
+                                    </a>
+                                @else
+                                    <button disabled class="p-2 bg-zinc-800 text-zinc-600 rounded-lg cursor-not-allowed opacity-50" title="Debe cerrar la caja para poder imprimir el reporte">
+                                        <i class="fas fa-print"></i>
+                                    </button>
+                                @endif
 
-                                <!-- Botón Eliminar -->
                                 <form action="{{ route('admin.cajas.destroy', $caja->id) }}" method="POST" id="formEliminar{{ $caja->id }}" class="inline">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit"
-                                        class="inline-flex items-center px-2.5 py-1 bg-red-500 hover:bg-red-600 text-white text-xs font-semibold rounded transition cursor-pointer"
+                                        class="p-2 bg-red-500 hover:bg-red-600 text-white rounded-lg transition cursor-pointer"
                                         onclick="confirmarEliminacion(event, {{ $caja->id }})" title="Eliminar Registro">
                                         <i class="fas fa-trash"></i>
                                     </button>
@@ -156,7 +154,6 @@
         </table>
     </div>
 
-    <!-- Paginación -->
     @if ($cajasHistorial->hasPages())
         <div class="px-3 mt-4 flex justify-between items-center text-sm">
             <div class="text-gray-600 dark:text-gray-400">
@@ -170,7 +167,6 @@
         </div>
     @endif
 
-    <!-- Modal Nativo de Flux para Abrir Caja -->
     <flux:modal name="modal-abrir-caja" class="md:w-96">
         <form action="{{ route('admin.cajas.store') }}" method="POST" class="space-y-6">
             @csrf
@@ -183,7 +179,7 @@
                 type="number"
                 step="0.01"
                 name="saldo_inicial"
-                label="Monto Inicial (Bs)"
+                label="Monto Inicial ({{ $simboloDivisa }})"
                 placeholder="0.00"
                 icon="credit-card"
                 required
@@ -200,7 +196,6 @@
         </form>
     </flux:modal>
 
-    <!-- Scripts de SweetAlert2 -->
     <script>
         function confirmarCierre(id) {
             Swal.fire({
@@ -235,24 +230,6 @@
             });
         }
 
-        function verDetalleCaja(id, cajero, inicial, ventas, final, apertura, cierre, estado) {
-            Swal.fire({
-                title: `Detalle de Caja #${id}`,
-                html: `
-                    <div class="text-left space-y-2 text-sm">
-                        <p><strong>Cajero:</strong> ${cajero}</p>
-                        <p><strong>Estado:</strong> ${estado.toUpperCase()}</p>
-                        <p><strong>Saldo Inicial:</strong> Bs ${Number(inicial).toFixed(2)}</p>
-                        <p><strong>Total Ventas:</strong> Bs ${Number(ventas).toFixed(2)}</p>
-                        <p><strong>Saldo Final:</strong> ${final !== 'null' && final !== '' ? 'Bs ' + Number(final).toFixed(2) : 'En proceso'}</p>
-                        <hr class="my-2">
-                        <p class="text-xs text-gray-500"><strong>Apertura:</strong> ${apertura}</p>
-                        <p class="text-xs text-gray-500"><strong>Cierre:</strong> ${cierre !== 'null' ? cierre : '---'}</p>
-                    </div>
-                `,
-                confirmButtonText: 'Cerrar',
-                confirmButtonColor: '#2563eb'
-            });
-        }
+
     </script>
 </x-layouts::app>

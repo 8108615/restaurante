@@ -11,6 +11,7 @@ class Venta extends Model
 
     protected $fillable = [
         'user_id',
+        'caja_id',
         'total',
         'metodo_pago',
         'monto_pagado',
@@ -28,5 +29,9 @@ class Venta extends Model
     public function detalles()
     {
         return $this->hasMany(DetalleVenta::class);
+    }
+    public function caja()
+    {
+        return $this->belongsTo(Caja::class);
     }
 }

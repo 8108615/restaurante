@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('ventas', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete(); // Quién realizó la venta
+            $table->foreignId('caja_id')->nullable()->constrained('cajas')->onDelete('set null');
             $table->decimal('total', 10, 2);
             $table->string('metodo_pago')->default('Efectivo'); // Efectivo, QR, Tarjeta, etc.
             $table->decimal('monto_pagado', 10, 2)->nullable();

@@ -58,9 +58,19 @@ class VentaController extends Controller
         try {
             DB::beginTransaction();
 
-            // 1. Crear la cabecera de la venta
+            // 0. Buscar la caja abierta del usuario actual
+            $cajaAbierta = \App\Models\Caja::where('user_id', Auth::id())
+                ->where('estado', 'abierto')
+                ->first();
+
+            if (!$cajaAbierta) {
+                throw new \Exception("No tienes ninguna caja abierta en este momento. Debes abrir una caja antes de realizar ventas.");
+            }
+
+            // 1. Crear la cabecera de la venta (incluyendo el caja_id)
             $venta = Venta::create([
                 'user_id' => Auth::id(),
+                'caja_id' => $cajaAbierta->id, // <--- ¡Aquí vinculamos la venta con la caja abierta!
                 'total' => $request->total,
                 'metodo_pago' => $request->metodo_pago,
                 'monto_pagado' => $request->input('monto_pagado', $request->total),
@@ -95,11 +105,6 @@ class VentaController extends Controller
 
             // Cargar relaciones para el ticket
             $venta->load('detalles.producto');
-
-            // Obtener datos de la empresa/ajustes (Si tienes un modelo Ajuste, puedes usarlo aquí.
-            // Si no, puedes cambiar estos valores por los tuyos temporalmente)
-            // Ejemplo si usas una tabla o clase de configuraciones:
-            // $config = \App\Models\Ajuste::first();
 
             $ajuste = \App\Models\Ajuste::first();
 

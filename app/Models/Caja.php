@@ -21,6 +21,11 @@ class Caja extends Model
         'estado',
     ];
 
+    public function ventas()
+    {
+        return $this->hasMany(Venta::class);
+    }
+
     // Relación con el usuario (vendedor/cajero)
     public function user()
     {
